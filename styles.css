@@ -44,19 +44,23 @@ body {
   background: radial-gradient(71.4% 71.4% at 51.7% 28.6%, #3A393F 0%, #17171A 100%);
   box-shadow: inset 0px 0px 114px rgba(0, 0, 0, 0.45);
   border-radius: 50%;
+  color: #FFFFFF;
   display: flex;
   flex-direction: column;
-  height: 500px;
   justify-content: center;
+  height: 500px;
+  position: relative;
   width: 500px;
   z-index: 2;
 }
 
 .time {
-  color: #FFFFFF;
   display: flex;
   font-family: "Bebas";
   font-size: 196px;
+  margin: 30px auto;
+  position: relative;
+  top: 30px;
 }
 
 input[type="text"] {
