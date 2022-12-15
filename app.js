@@ -4,6 +4,7 @@ const seconds = document.querySelector('.seconds > input[type=text]');
 const startButton = document.querySelector('.start');
 const settingsButton = document.querySelector('.settings');
 const settingsImage = document.getElementById('settings');
+const audio = new Audio('./audio/old-alarm-clock.mp3');
 
 let running = false;
 let timer = null;
@@ -77,12 +78,15 @@ const finishTimer = () => {
   // Changer la couleur de l'anneau
   ring.classList.add('ending');
 
+  // Jouer un son
+  audio.play();
+
   setTimeout(() => {
     alert('Time\s up');
 
     // Lancer la fonction resetTimer
     resetTimer();
-  }, 1000);
+  }, 2000);
 }
 
 const resetTimer = () => {
