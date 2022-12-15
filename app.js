@@ -1,6 +1,6 @@
 const ring = document.querySelector('.ring');
-const minutes = document.querySelector('.minutes > input[type="text"]');
-const seconds = document.querySelector('.seconds > input[type="text"]');
+const minutes = document.querySelector('.minutes > input[type=text]');
+const seconds = document.querySelector('.seconds > input[type=text]');
 const startButton = document.querySelector('.start');
 const settingsButton = document.querySelector('.settings');
 const settingsImage = document.getElementById('settings');
@@ -11,11 +11,12 @@ let startTime = 0;
 let originalMinutes = 0;
 let originalSeconds = 0;
 let modify = false;
+let totalSeconds;
 
 startButton.addEventListener('click', () => {
   if (!running) {
     startTimer();
-  } else {
+  } else if (running) {
     pauseTimer();
   }
 });
@@ -35,7 +36,7 @@ const startTimer = () => {
   const secondsValue = parseInt(seconds.value);
 
   // Récupérer le nombre total de secondes
-  const totalSeconds = secondsValue + minutesValue * 60;
+  totalSeconds = secondsValue + minutesValue * 60;
 
   timer = setInterval(() => {
     // Récupérer la date actuelle
@@ -50,7 +51,7 @@ const startTimer = () => {
 
     // Mettre les nouvelles valeurs dans le champ input
     minutes.value = padNumber(minutesLeft);
-    seconds.value = padNumber(secondsLeft);
+    seconds.value = padNumber(secondsLeft % 60);
 
     // Si le timer a fini, appeler la fonction finishTimer
     if (minutesLeft === 0 && secondsLeft <= 0) {
@@ -59,11 +60,6 @@ const startTimer = () => {
 
   }, 1000);
 };
-
-const setOriginalTime = () => {
-  originalMinutes = padNumber(parseInt(minutes.value));
-  originalSeconds = padNumber(parseInt(seconds.value));
-}
 
 const pauseTimer = () => {
   // Changer le statut et le texte du bouton
@@ -75,18 +71,18 @@ const pauseTimer = () => {
 }
 
 const finishTimer = () => {
-  // Changer la couleur de l'anneau
-  ring.classList.add('ending');
-
   // Réinitialiser l'intervalle en cours
   clearInterval(timer);
+
+  // Changer la couleur de l'anneau
+  ring.classList.add('ending');
 
   setTimeout(() => {
     alert('Time\s up');
 
     // Lancer la fonction resetTimer
     resetTimer();
-  }, 0);
+  }, 1000);
 }
 
 const resetTimer = () => {
@@ -121,7 +117,7 @@ settingsButton.addEventListener('click', () => {
     pauseTimer();
   }
 
-  if (!modify) {
+    if (!modify) {
     modify = true;
 
     // Annuler le 'disabled' des champs input
@@ -130,21 +126,28 @@ settingsButton.addEventListener('click', () => {
   } else {
     modify = false;
 
+    // Rajouter le 'O' pour les nombres < 10
+    if (minutes.value.length < 2) {
+      minutes.value = padNumber(minutes.value);
+    }
+
+    if (seconds.value.length < 2) {
+      seconds.value = padNumber(seconds.value);
+    }
+
     // Remettre le disabled
     minutes.disabled = true;
     seconds.disabled = true;
   }
 
-  // modifier l'image de l'icône
+  // Modifier l'image de l'icône
   toggleImage(settingsImage);
-  console.log(modify);
 })
 
 const toggleImage = (image) => {
-  console.log(image.src);
-
   if (image.getAttribute('src') == 'images/check.svg') {
     image.setAttribute('src', 'images/gear.svg');
+    // setOriginalTime();
   } else {
     image.setAttribute('src', 'images/check.svg');
   }
@@ -154,6 +157,19 @@ const disableInputs = () => {
   minutes.disabled = true;
   seconds.disabled = true;
 }
+
+const validateTimeInput = (e) => {
+  const validatedInput = e.target.value.replace(/[^0-9]/g, '').substring(0, 2);
+  e.target.value = validatedInput;
+}
+
+const setOriginalTime = () => {
+  originalMinutes = padNumber(parseInt(minutes.value));
+  originalSeconds = padNumber(parseInt(seconds.value));
+}
+
+minutes.addEventListener('keyup', validateTimeInput);
+seconds.addEventListener('keyup', validateTimeInput);
 
 setOriginalTime();
 resetTimer();
